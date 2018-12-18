@@ -203,7 +203,7 @@ abstract class Base extends Fluent
 	 *
 	 * @param mixed ...$arguments
 	 *
-	 * @return mixed
+	 * @return static
 	 */
 	public static function make(...$arguments)
 	{

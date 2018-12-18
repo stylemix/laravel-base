@@ -120,7 +120,7 @@ abstract class FormResource extends JsonResource
 	public function toArray($request)
 	{
 		return [
-			'fields' => $this->getFields(),
+			'fields' => $this->getFields()->toArray(),
 			'data' => parent::toArray($request),
 		];
 	}
