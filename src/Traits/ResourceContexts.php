@@ -51,9 +51,4 @@ trait ResourceContexts
 	{
 		return $this->getContext($request) == $context;
 	}
-
-	protected function defaultContext($request)
-	{
-		return parent::toArray($request);
-	}
 }
