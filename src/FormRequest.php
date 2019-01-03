@@ -9,10 +9,9 @@ abstract class FormRequest extends IlluminateFormRequest
 	protected $formResource;
 
 	/**
-	 * @param mixed $resource
 	 * @return \Stylemix\Base\FormResource
 	 */
-	abstract protected function formResource($resource = null);
+	abstract protected function formResource();
 
 	/**
 	 * Get the validation rules that apply to the request.
