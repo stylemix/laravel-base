@@ -14,4 +14,12 @@ class Number extends Input
 		return array_merge(parent::getRules(), ['numeric']);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	protected function sanitizeRequestInput($value)
+	{
+		return strpos($value, '.') === false ? intval($value) : floatval($value);
+	}
+
 }

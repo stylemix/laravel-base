@@ -80,50 +80,29 @@ abstract class Base extends Fluent
 	 *
 	 * @param  \Illuminate\Http\Request $request
 	 * @param  object                   $model
-	 *
-	 * @return void
-	 */
-	public function fill(Request $request, $model)
-	{
-		$this->fillInto($request, $model, $this->attribute);
-	}
-
-	/**
-	 * Hydrate the given attribute on the model based on the incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request $request
-	 * @param  object                   $model
-	 * @param  string                   $attribute
-	 * @param  string|null              $requestAttribute
-	 *
-	 * @return void
-	 */
-	public function fillInto(Request $request, $model, $attribute, $requestAttribute = null)
-	{
-		$this->fillAttribute($request, $requestAttribute ?? $this->attribute, $model, $attribute);
-	}
-
-	/**
-	 * Hydrate the given attribute on the model based on the incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request $request
 	 * @param  string                   $requestAttribute
-	 * @param  object                   $model
 	 * @param  string                   $attribute
 	 *
 	 * @return void
 	 */
-	protected function fillAttribute(Request $request, $requestAttribute, $model, $attribute)
+	public function fill(Request $request, $model, $requestAttribute = null, $attribute = null)
 	{
+		$requestAttribute = $requestAttribute ?? $this->attribute;
+		$attribute = $attribute ?? $this->attribute;
+
 		if (isset($this->fillCallback)) {
 			call_user_func(
-				$this->fillCallback, $request, $model, $attribute, $requestAttribute
+				$this->fillCallback, $request, $model, $requestAttribute, $attribute
 			);
+
+			return;
 		}
 
-		$this->fillAttributeFromRequest(
-			$request, $requestAttribute, $model, $attribute
-		);
+		if ($request->exists($requestAttribute)) {
+			$this->fillAttributeFromRequest(
+				$request, $requestAttribute, $model, $attribute
+			);
+		}
 	}
 
 	/**
@@ -191,11 +170,23 @@ abstract class Base extends Fluent
 	 */
 	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
 	{
-		$requestAttribute = $requestAttribute ?: $attribute;
+		$value = $request[$requestAttribute];
 
-		if ($request->exists($requestAttribute)) {
-			$model->{$attribute} = $request[$requestAttribute];
-		}
+		$model->{$attribute} = $this->multiple ?
+			array_map([$this, 'sanitizeRequestInput'], array_wrap($value)) :
+			$this->sanitizeRequestInput($value);
+	}
+
+	/**
+	 * Sanitize value from request
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	protected function sanitizeRequestInput($value)
+	{
+		return $value;
 	}
 
 	/**

@@ -14,11 +14,9 @@ class Password extends Input
 		return array_merge(parent::getRules(), ['string']);
 	}
 
-	protected function fillAttribute(Request $request, $requestAttribute, $model, $attribute)
+	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
 	{
-		if (! empty($request->{$requestAttribute})) {
-			$model->{$attribute} = Hash::make($request[$requestAttribute]);
-		}
+		$model->{$attribute} = Hash::make($request[$requestAttribute]);
 	}
 
 }
