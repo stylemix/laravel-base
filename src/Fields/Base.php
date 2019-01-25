@@ -9,8 +9,15 @@ use Illuminate\Support\Fluent;
  * @property string   $attribute Attribute name
  * @property string   $component Component for Vue
  * @property string   $label     Label for attribute
+ * @method $this label($label) Set label for field
+ * @property string $placeholder Placeholder for field
+ * @method $this placeholder($placeholder) Set placeholder for field
  * @property boolean  $required  Field value is required
+ * @method $this required($value = true) Set as required
+ * @property mixed $rules Validation rules
+ * @method $this rules(mixed $rules) Set validation rules
  * @property boolean  $multiple  Multiple mode
+ * @method $this multiple($value = true) Set as multiple
  */
 abstract class Base extends Fluent
 {
