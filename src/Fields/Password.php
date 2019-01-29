@@ -16,7 +16,15 @@ class Password extends Input
 
 	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
 	{
-		$model->{$attribute} = Hash::make($request[$requestAttribute]);
+		if (trim($value = $request[$requestAttribute]) !== '') {
+			$model->{$attribute} = Hash::make($value);
+		}
+	}
+
+	public function resolve($resource, $attribute = null)
+	{
+		// Password field should not be resolved from models
+		return;
 	}
 
 }
