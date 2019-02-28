@@ -52,6 +52,10 @@ trait CastsEnums
 			return $this->{$method}($value);
 		}
 
+		if (is_null($value)) {
+			return null;
+		}
+
 		$class = $this->getEnumClass($key);
 
 		return $class::create($value);
