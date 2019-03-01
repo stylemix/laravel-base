@@ -11,4 +11,8 @@ class Select extends Base
 
 	public $component = 'select-field';
 
+	protected $defaults = [
+		'options' => [],
+	];
+
 }

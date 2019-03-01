@@ -33,6 +33,13 @@ class Input extends Base
 
 	public $type = 'text';
 
+	protected $defaults = [
+		'min' => null,
+		'max' => null,
+		'step' => null,
+		'pattern' => null,
+	];
+
 	public function toArray()
 	{
 		return array_merge(parent::toArray(), [

@@ -12,4 +12,9 @@ class Editor extends Base
 {
 
 	public $component = 'editor-field';
+
+	protected $defaults = [
+		'options' => null,
+		'modules' => null,
+	];
 }

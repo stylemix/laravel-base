@@ -28,6 +28,12 @@ abstract class Base extends Fluent
 	public $value;
 
 	/**
+	 * Default values for fields properties
+	 * @var array
+	 */
+	protected $defaults = [];
+
+	/**
 	 * @var callable Callback for resolving value from given resource
 	 */
 	protected $resolveCallback;
@@ -39,10 +45,21 @@ abstract class Base extends Fluent
 	 */
 	public function __construct($attribute)
 	{
+		parent::__construct([]);
+
+		$defaults = $this->defaults;
+		$defaults += [
+			'placeholder' => null,
+			'readonly' => null,
+			'disabled' => null,
+		];
+
+		foreach ($defaults as $key => $value) {
+			$this->offsetSet($key, $value);
+		}
+
 		$this->attribute = $attribute;
 		$this->label     = $this->getLabel();
-
-		parent::__construct([]);
 	}
 
 	/**
