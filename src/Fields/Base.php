@@ -34,9 +34,19 @@ abstract class Base extends Fluent
 	protected $defaults = [];
 
 	/**
+	 * @var mixed Currently resolving resource
+	 */
+	protected $resource = null;
+
+	/**
 	 * @var callable Callback for resolving value from given resource
 	 */
 	protected $resolveCallback;
+
+	/**
+	 * @var callable Callback when field resolved to array
+	 */
+	protected $arrayCallback;
 
 	/**
 	 * Base constructor.
@@ -139,15 +149,16 @@ abstract class Base extends Fluent
 	 */
 	public function resolve($resource, $attribute = null)
 	{
+		$this->resource = $resource;
+
 		$attribute = $attribute ?? $this->attribute;
 
 		if (!$this->resolveCallback) {
 			$this->value = $this->resolveAttribute($resource, $attribute);
 		}
-		elseif (is_callable($this->resolveCallback)
-			&& data_get($resource, $attribute, '___missing') !== '___missing') {
+		elseif (is_callable($this->resolveCallback)) {
 			$this->value = call_user_func(
-				$this->resolveCallback, data_get($resource, $attribute), $resource
+				$this->resolveCallback, data_get($resource, $attribute), $resource, $this
 			);
 		}
 	}
@@ -171,10 +182,16 @@ abstract class Base extends Fluent
 			$this->value = [];
 		}
 
-		return array_merge(parent::toArray(), [
+		$array = array_merge(parent::toArray(), [
 			'component' => $this->component,
 			'value' => $this->value,
 		]);
+
+		if (is_callable($this->arrayCallback)) {
+			$array = call_user_func($this->arrayCallback, $array, $this);
+		}
+
+		return $array;
 	}
 
 	protected function getLabel()
@@ -228,12 +245,34 @@ abstract class Base extends Fluent
 	/**
 	 * @param callable $resolveCallback
 	 *
-	 * @return Base
+	 * @return $this
 	 */
-	public function resolveCallback(callable $resolveCallback): Base
+	public function resolveCallback(callable $resolveCallback)
 	{
 		$this->resolveCallback = $resolveCallback;
 
 		return $this;
+	}
+
+	/**
+	 * @param callable $arrayCallback
+	 *
+	 * @return $this
+	 */
+	public function arrayCallback(callable $arrayCallback)
+	{
+		$this->arrayCallback = $arrayCallback;
+
+		return $this;
+	}
+
+	/**
+	 * Get currently resolving resource
+	 *
+	 * @return mixed
+	 */
+	public function getResource()
+	{
+		return $this->resource;
 	}
 }
