@@ -2,39 +2,23 @@
 
 namespace Stylemix\Base\Eloquent;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 trait DateFixes
 {
 
 	/**
-	 * Create a new model instance that is existing.
+	 * Return a timestamp as DateTime object.
 	 *
-	 * @param  array  $attributes
-	 * @param  string|null  $connection
-	 * @return static
+	 * @param  mixed  $value
+	 * @return \Illuminate\Support\Carbon
 	 */
-	public function newFromBuilder($attributes = [], $connection = null)
+	protected function asDateTime($value)
 	{
-		$attributes = (array) $attributes;
-
-		$dates = collect($this->getCasts())
-			->intersect(['date', 'datetime'])
-			->keys()
-			->merge($this->getDates())
-			->all();
-
-		foreach ($dates as $key) {
-			if (! isset($attributes[$key])) {
-				continue;
-			}
-
-			$attributes[$key] = Carbon::parse($attributes[$key]);
+		if (is_string($value) && !is_numeric($value)) {
+			return Carbon::parse($value);
 		}
 
-		$model = parent::newFromBuilder($attributes, $connection);
-
-		return $model;
+		return parent::asDateTime($value);
 	}
-
 }
