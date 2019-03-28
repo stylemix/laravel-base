@@ -3,6 +3,7 @@
 namespace Stylemix\Base\Fields;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
 
 /**
@@ -213,9 +214,23 @@ abstract class Base extends Fluent
 	{
 		$value = $request[$requestAttribute];
 
-		$model->{$attribute} = $this->multiple ?
-			array_map([$this, 'sanitizeRequestInput'], array_wrap($value)) :
+		$value = $this->multiple ?
+			array_map([$this, 'sanitizeRequestInput'], Arr::wrap($value)) :
 			$this->sanitizeRequestInput($value);
+
+		// If attribute path has dots, that means filling value into a deep array
+		// For eloquent model or other objects with overloaded properties
+		// we should take first level value and then fill deep value
+		if (strpos($attribute, '.') !== false) {
+			list($attribute, $path) = explode('.', $attribute, 2);
+			$complexValue = $model[$attribute] ?? [];
+			data_set($complexValue, $path, $value);
+			$model[$attribute] = $complexValue;
+		}
+		else {
+			$model[$attribute] = $value;
+		}
+
 	}
 
 	/**
