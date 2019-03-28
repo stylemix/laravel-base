@@ -20,7 +20,7 @@ abstract class FormRequest extends IlluminateFormRequest
 	 */
 	public function rules()
 	{
-		return $this->formResource()->rules($this);
+		return $this->getFormResource()->rules($this);
 	}
 
 	/**
