@@ -223,12 +223,12 @@ abstract class Base extends Fluent
 		// we should take first level value and then fill deep value
 		if (strpos($attribute, '.') !== false) {
 			list($attribute, $path) = explode('.', $attribute, 2);
-			$complexValue = $model[$attribute] ?? [];
+			$complexValue = data_get($model, $attribute) ?? [];
 			data_set($complexValue, $path, $value);
-			$model[$attribute] = $complexValue;
+			data_set($model, $attribute, $complexValue);
 		}
 		else {
-			$model[$attribute] = $value;
+			data_set($model, $attribute, $value);
 		}
 
 	}
