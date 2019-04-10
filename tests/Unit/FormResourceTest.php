@@ -11,6 +11,21 @@ use Stylemix\Base\Tests\Dummy\DummyModel;
 class FormResourceTest extends TestCase
 {
 
+	public function testToArray()
+	{
+		$request = Request::create('/');
+
+		// no resource provided
+		$resolved = $this->makeForm()->resolve($request);
+		$this->assertEquals(['field1' => null, 'field2' => null], $resolved['data']);
+
+		// resource with values
+		$resolved = $this->makeForm()
+			->setResource(['field1' => 'val1'])
+			->resolve($request);
+		$this->assertEquals(['field1' => 'val1', 'field2' => null], $resolved['data']);
+	}
+
 	public function testFill()
 	{
 		$data = [

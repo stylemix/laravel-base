@@ -24,7 +24,7 @@ abstract class FormResource extends JsonResource
 
 	public function __construct($model = null)
 	{
-		parent::__construct($model ?? []);
+		parent::__construct($model);
 	}
 
 	/**
@@ -43,10 +43,6 @@ abstract class FormResource extends JsonResource
 	{
 		if (!$this->fields) {
 			$this->fields = collect($this->fields());
-
-			if ($this->resource) {
-				$this->fields->each->resolve($this->resource);
-			}
 		}
 
 		return $this->fields;
@@ -176,9 +172,21 @@ abstract class FormResource extends JsonResource
 
 	public function toArray($request)
 	{
+		// resource resolved to array
+		$data = parent::toArray($request);
+
+		// replaced with field resolved data
+		foreach ($this->getFields() as $field) {
+			data_set($data, $field->attribute, $field->resolve($this->resource));
+		}
+
+		if (empty($data)) {
+			$data = new \stdClass();
+		}
+
 		return [
 			'fields' => $this->getFields()->toArray(),
-			'data' => parent::toArray($request),
+			'data' => $data,
 		];
 	}
 

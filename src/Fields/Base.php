@@ -23,11 +23,6 @@ abstract class Base extends Fluent
 {
 
 	/**
-	 * @var mixed Attribute value
-	 */
-	public $value;
-
-	/**
 	 * @var array|string Additional rules
 	 */
 	public $rules;
@@ -164,22 +159,33 @@ abstract class Base extends Fluent
 	 * @param  mixed       $resource
 	 * @param  string|null $attribute
 	 *
-	 * @return void
+	 * @return mixed
 	 */
 	public function resolve($resource, $attribute = null)
 	{
 		$this->resource = $resource;
+		$value = null;
 
-		$attribute = $attribute ?? $this->attribute;
+		// It make no sense to resolve empty resource
+		// It should be checked for null or empty array
+		if (!empty($resource)) {
+			$attribute = $attribute ?? $this->attribute;
+			if (!$this->resolveCallback) {
+				$value = $this->resolveAttribute($resource, $attribute);
+			}
+			elseif (is_callable($this->resolveCallback)) {
+				$value = call_user_func(
+					$this->resolveCallback, data_get($resource, $attribute), $resource, $this
+				);
+			}
+		}
 
-		if (!$this->resolveCallback) {
-			$this->value = $this->resolveAttribute($resource, $attribute);
+		// Provide empty array in case the field is multiple
+		if (!$value && $this->multiple) {
+			$value = [];
 		}
-		elseif (is_callable($this->resolveCallback)) {
-			$this->value = call_user_func(
-				$this->resolveCallback, data_get($resource, $attribute), $resource, $this
-			);
-		}
+
+		return $value;
 	}
 
 	/**
@@ -195,17 +201,17 @@ abstract class Base extends Fluent
 		return data_get($resource, $attribute);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function toArray()
 	{
-		if (!$this->value && $this->multiple) {
-			$this->value = [];
-		}
+		$array = parent::toArray();
 
-		$array = array_merge(parent::toArray(), [
-			'component' => $this->component,
-			'value' => $this->value,
-		]);
+		// Native properties
+		$array['component'] = $this->component;
 
+		// Allow fields to modify to array result
 		if (is_callable($this->arrayCallback)) {
 			$array = call_user_func($this->arrayCallback, $array, $this);
 		}
