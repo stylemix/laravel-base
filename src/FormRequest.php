@@ -24,19 +24,47 @@ abstract class FormRequest extends IlluminateFormRequest
 	}
 
 	/**
-	 * Fill the request to the given resource
+	 * Fill the request into the given resource
 	 *
 	 * @param mixed $resource
 	 *
 	 * @return mixed
+	 * @throws \Exception
 	 */
-	public function fill($resource = null)
+	public function fill($resource)
 	{
-		$resource = $resource ?? new \stdClass();
-
 		return $this->getFormResource()
-			->setResource($resource)
-			->fill($this);
+			->fill($resource, $this);
+	}
+
+	/**
+	 * Fill the request into the given resource only for specified fields
+	 *
+	 * @param mixed $resource
+	 * @param array $fields
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function fillOnly($resource, array $fields)
+	{
+		return $this->getFormResource()
+			->fillOnly($resource, $fields, $this);
+	}
+
+	/**
+	 * Fill the request into the given resource except specified fields
+	 *
+	 * @param mixed $resource
+	 * @param array $fields
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function fillExcept($resource, array $fields)
+	{
+		return $this->getFormResource()
+			->fillExcept($resource, $fields, $this);
 	}
 
 	/**

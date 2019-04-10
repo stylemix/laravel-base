@@ -5,6 +5,7 @@ namespace Stylemix\Base;
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Stylemix\Base\Fields\Base;
 
 abstract class FormResource extends JsonResource
 {
@@ -103,18 +104,74 @@ abstract class FormResource extends JsonResource
 	}
 
 	/**
-	 * Fill given request into resource model
+	 * Fill data into resource model from a request
 	 *
+	 * @param object $resource
 	 * @param \Illuminate\Http\Request|null $request
 	 *
 	 * @return mixed
+	 * @throws \Exception
 	 */
-	public function fill(Request $request = null)
+	public function fill($resource, Request $request = null)
 	{
-		$request = $request ?: Container::getInstance()->make('request');
-		$this->getFields()->each->fill($request, $this->resource);
+		$this->fillRequestInto($request, $resource);
 
-		return $this->resource;
+		return $resource;
+	}
+
+	/**
+	 * Fill only specified fields
+	 *
+	 * @param mixed $resource
+	 * @param array $fields List of field names
+	 * @param \Illuminate\Http\Request|null $request
+	 *
+	 * @throws \Exception
+	 */
+	public function fillOnly($resource, array $fields, Request $request = null)
+	{
+		$this->fillRequestInto($request, $resource, function (Base $field) use ($fields) {
+			return in_array($field->attribute, $fields);
+		});
+	}
+
+	/**
+	 * Fill only specified fields
+	 *
+	 * @param mixed $resource
+	 * @param array $fields List of field names
+	 * @param \Illuminate\Http\Request|null $request
+	 *
+	 * @throws \Exception
+	 */
+	public function fillExcept($resource, array $fields, Request $request = null)
+	{
+		$this->fillRequestInto($request, $resource, function (Base $field) use ($fields) {
+			return !in_array($field->attribute, $fields);
+		});
+	}
+
+	/**
+	 * @param \Illuminate\Http\Request $request
+	 * @param $resource
+	 * @param null $fieldsFilter
+	 *
+	 * @throws \Exception
+	 */
+	protected function fillRequestInto(Request $request, $resource, $fieldsFilter = null)
+	{
+		if (!is_object($resource)) {
+			throw new \Exception('$resource should be an object to allow fields modify it without returning');
+		}
+
+		$request = $request ?: Container::getInstance()->make('request');
+		$fields  = $this->getFields();
+
+		if ($fieldsFilter) {
+			$fields = $fields->filter($fieldsFilter);
+		}
+
+		$fields->each->fill($request, $resource);
 	}
 
 	public function toArray($request)
