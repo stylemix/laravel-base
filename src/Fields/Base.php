@@ -5,6 +5,7 @@ namespace Stylemix\Base\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 
 /**
  * @property string   $attribute Attribute name
@@ -15,8 +16,6 @@ use Illuminate\Support\Fluent;
  * @method $this placeholder($placeholder) Set placeholder for field
  * @property boolean  $required  Field value is required
  * @method $this required($value = true) Set as required
- * @property mixed $rules Validation rules
- * @method $this rules(mixed $rules) Set validation rules
  * @property boolean  $multiple  Multiple mode
  * @method $this multiple($value = true) Set as multiple
  */
@@ -27,6 +26,11 @@ abstract class Base extends Fluent
 	 * @var mixed Attribute value
 	 */
 	public $value;
+
+	/**
+	 * @var array|string Additional rules
+	 */
+	public $rules;
 
 	/**
 	 * Default values for fields properties
@@ -88,15 +92,29 @@ abstract class Base extends Fluent
 	}
 
 	/**
+	 * Set field validation rules
+	 *
+	 * @param mixed $rules
+	 *
+	 * @return $this
+	 */
+	public function rules($rules)
+	{
+		$this->rules = $rules;
+
+		return $this;
+	}
+
+	/**
 	 * Get rules for the attribute
 	 *
 	 * @return array
 	 */
 	public function getRules()
 	{
-		$rules = array_wrap($this->rules);
+		$rules = Arr::wrap($this->rules);
 
-		if (count($rules) == 1 && str_contains($rules[0], '|')) {
+		if (isset($rules[0]) && is_string($rules[0]) && Str::contains($rules[0], '|')) {
 			$rules = explode('|', $rules[0]);
 		}
 

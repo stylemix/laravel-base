@@ -2,6 +2,8 @@
 
 namespace Stylemix\Base\Fields;
 
+use Illuminate\Support\Arr;
+
 /**
  * @property array $options
  * @method $this options($options) Set checkbox options
@@ -17,7 +19,7 @@ class Checkboxes extends Base
 
 	protected function sanitizeRequestInput($value)
 	{
-		return array_wrap($value);
+		return Arr::wrap($value);
 	}
 
 }
