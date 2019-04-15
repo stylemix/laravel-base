@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
  * @method $this required($value = true) Set as required
  * @property boolean  $multiple  Multiple mode
  * @method $this multiple($value = true) Set as multiple
+ * @property mixed $initialValue  Initial value for empty model
+ * @method $this initialValue($initialValue) Set initial value for empty model
  */
 abstract class Base extends Fluent
 {
