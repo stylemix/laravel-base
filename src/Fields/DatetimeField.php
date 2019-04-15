@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Fields;
 
-class Datetime extends Input
+class DatetimeField extends TextField
 {
 
 	public $type = 'datetime-local';

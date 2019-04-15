@@ -6,7 +6,7 @@ namespace Stylemix\Base\Fields;
  * @property array $options
  * @method $this options($options) Set checkbox options
  */
-class Radios extends Base
+class RadiosField extends Base
 {
 
 	public $component = 'radios-field';

@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Fields;
 
-class Checkbox extends Base
+class CheckboxField extends Base
 {
 
 	public $component = 'checkbox-field';

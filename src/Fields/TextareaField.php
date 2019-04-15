@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Fields;
 
-class Textarea extends Base
+class TextareaField extends Base
 {
 
 	public $component = 'textarea-field';

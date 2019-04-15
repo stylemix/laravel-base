@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
  * @property array $options
  * @method $this options($options) Set checkbox options
  */
-class Checkboxes extends Base
+class CheckboxesField extends Base
 {
 
 	public $component = 'checkboxes-field';

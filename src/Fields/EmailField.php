@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Fields;
 
-class Email extends Input
+class EmailField extends TextField
 {
 	public $type = 'email';
 
