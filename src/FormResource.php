@@ -177,7 +177,10 @@ abstract class FormResource extends JsonResource
 
 		// replaced with field resolved data
 		foreach ($this->getFields() as $field) {
-			data_set($data, $field->attribute, $field->resolve($this->resource));
+			// Some fields are required to have access to original resource
+			$field->setResource($this->resource);
+
+			data_set($data, $field->attribute, $field->resolve($data));
 		}
 
 		if (empty($data)) {

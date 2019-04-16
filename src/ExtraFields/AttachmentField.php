@@ -30,8 +30,16 @@ class AttachmentField extends Base
 	/**
 	 * @inheritdoc
 	 */
-	protected function resolveAttribute($resource, $attribute)
+	protected function resolveAttribute($data, $attribute)
 	{
+		$resolved = parent::resolveAttribute($data, $attribute);
+
+		if (!$this->resource) {
+			return $resolved;
+		}
+
+		$resource = $this->resource;
+
 		if (!method_exists($resource, 'getMedia')) {
 			throw new \Exception('Attachment field can not be resolved to resource that do not uses media attachments');
 		}
@@ -42,7 +50,7 @@ class AttachmentField extends Base
 
 		$this->attached = $this->multiple ? $attached->all() : $attached->first();
 
-		return parent::resolveAttribute($resource, $attribute);
+		return $resolved;
 	}
 
 	public function toArray()

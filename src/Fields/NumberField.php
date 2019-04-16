@@ -28,4 +28,12 @@ class NumberField extends Base
 		return $this->integer ? intval($value) : floatval($value);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	protected function sanitizeResolvedValue($value)
+	{
+		return $this->integer ? intval($value) : floatval($value);
+	}
+
 }

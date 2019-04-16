@@ -158,28 +158,30 @@ abstract class Base extends Fluent
 	/**
 	 * Resolve the field's value.
 	 *
-	 * @param  mixed       $resource
+	 * @param  mixed       $data
 	 * @param  string|null $attribute
 	 *
 	 * @return mixed
 	 */
-	public function resolve($resource, $attribute = null)
+	public function resolve($data, $attribute = null)
 	{
-		$this->resource = $resource;
 		$value = null;
 
 		// It make no sense to resolve empty resource
 		// It should be checked for null or empty array
-		if (!empty($resource)) {
+		if (!empty($data)) {
 			$attribute = $attribute ?? $this->attribute;
-			if (!$this->resolveCallback) {
-				$value = $this->resolveAttribute($resource, $attribute);
-			}
-			elseif (is_callable($this->resolveCallback)) {
+			$value = $this->resolveAttribute($data, $attribute);
+
+			if (is_callable($this->resolveCallback)) {
 				$value = call_user_func(
-					$this->resolveCallback, data_get($resource, $attribute), $resource, $this
+					$this->resolveCallback, $value, $data, $this
 				);
 			}
+
+			$value = $this->multiple ?
+				array_map([$this, 'sanitizeResolvedValue'], Arr::wrap($value)) :
+				$this->sanitizeResolvedValue($value);
 		}
 
 		// Provide empty array in case the field is multiple
@@ -193,14 +195,14 @@ abstract class Base extends Fluent
 	/**
 	 * Resolve the given attribute from the given resource.
 	 *
-	 * @param  mixed  $resource
+	 * @param  mixed  $data
 	 * @param  string $attribute
 	 *
 	 * @return mixed
 	 */
-	protected function resolveAttribute($resource, $attribute)
+	protected function resolveAttribute($data, $attribute)
 	{
-		return data_get($resource, $attribute);
+		return data_get($data, $attribute);
 	}
 
 	/**
@@ -272,6 +274,18 @@ abstract class Base extends Fluent
 	}
 
 	/**
+	 * Field classes should override this method to sanitize resolved value to proper format
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	protected function sanitizeResolvedValue($value)
+	{
+		return $value;
+	}
+
+	/**
 	 * Creates new instance of the field
 	 *
 	 * @param mixed ...$arguments
@@ -303,6 +317,20 @@ abstract class Base extends Fluent
 	public function arrayCallback(callable $arrayCallback)
 	{
 		$this->arrayCallback = $arrayCallback;
+
+		return $this;
+	}
+
+	/**
+	 * Set the resource that have to be resolved
+	 *
+	 * @param mixed $resource
+	 *
+	 * @return Base
+	 */
+	public function setResource($resource)
+	{
+		$this->resource = $resource;
 
 		return $this;
 	}
