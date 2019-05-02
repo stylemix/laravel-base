@@ -181,7 +181,8 @@ abstract class Base extends Fluent
 
 			$value = $this->multiple ?
 				array_map([$this, 'sanitizeResolvedValue'], Arr::wrap($value)) :
-				$this->sanitizeResolvedValue($value);
+				// We shouldn't sanitize null value, since it means no value
+				(is_null($value) ? null : $this->sanitizeResolvedValue($value));
 		}
 
 		// Provide empty array in case the field is multiple
