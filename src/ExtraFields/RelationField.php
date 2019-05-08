@@ -2,6 +2,7 @@
 
 namespace Stylemix\Base\ExtraFields;
 
+use Illuminate\Support\Str;
 use Stylemix\Base\Fields\Base;
 
 /**
@@ -53,7 +54,7 @@ class RelationField extends Base
 		}
 		else {
 			$this->source = [
-				'url' => str_plural($this->related),
+				'url' => $this->guessAjaxUrl(),
 				'params' => [
 					'context' => 'options',
 					'primary_key' => $this->otherKey,
@@ -124,6 +125,13 @@ class RelationField extends Base
 		}
 
 		return $options;
+	}
+
+	protected function guessAjaxUrl()
+	{
+		$related = str_replace('_id', '', $this->attribute);
+
+		return Str::plural($related);
 	}
 
 }

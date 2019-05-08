@@ -15,4 +15,23 @@ class SelectField extends Base
 		'options' => [],
 	];
 
+	/**
+	 * Import options from Enum class
+	 *
+	 * @param string $class
+	 *
+	 * @return $this
+	 */
+	public function fromEnum($class)
+	{
+		$this->options = collect($class::choices())
+			->map(function ($label, $value) {
+				return compact('label', 'value');
+			})
+			->values()
+			->all();
+
+		return $this;
+	}
+
 }
