@@ -3,28 +3,32 @@
 namespace Stylemix\Base\ExtraFields;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Plank\Mediable\Media;
 use Stylemix\Base\Fields\Base;
 
 /**
- * @property mixed $attached
+ * @property-read mixed $attached
  * @property string $mediaTag
+ * @method $this mediaTag($tag)
  */
 class AttachmentField extends Base
 {
 
 	public $component = 'attachment-field';
 
-	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
+	/**
+	 * @inheritDoc
+	 */
+	protected function getValueFromRequest(Request $request, $requestAttribute)
 	{
-		$requestAttribute = $requestAttribute ?: $attribute;
-
-		if ($request->exists($requestAttribute)) {
-			$files = array_wrap($request->request->get($requestAttribute, []));
-			$files += array_wrap($request->files->get($requestAttribute, []));
-			ksort($files);
-			$model->{$attribute} = $files;
+		if ($this->multiple) {
+			$files = Arr::wrap($request->request->get($requestAttribute, []));
+			$files += Arr::wrap($request->files->get($requestAttribute, []));
+			return ksort($files);
 		}
+
+		return $request[$requestAttribute];
 	}
 
 	/**
@@ -38,15 +42,7 @@ class AttachmentField extends Base
 			return $resolved;
 		}
 
-		$resource = $this->resource;
-
-		if (!method_exists($resource, 'getMedia')) {
-			throw new \Exception('Attachment field can not be resolved to resource that do not uses media attachments');
-		}
-
-		$attached = $resource->getMedia($this->mediaTag)->map(function ($media) {
-			return $this->getMediaJson($media);
-		});
+		$attached = collect(Arr::wrap(data_get($this->resource, $this->mediaTag)));
 
 		$this->attached = $this->multiple ? $attached->all() : $attached->first();
 

@@ -8,7 +8,9 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0"
+        "php": ">=7.0.0",
+        "spatie/laravel-query-builder": "^1.17",
+        "plank/laravel-mediable": "^2.8"
     },
     "require-dev": {
         "orchestra/testbench": "^3.6"
@@ -21,6 +23,16 @@
     "autoload-dev": {
         "psr-4": {
             "Stylemix\\Base\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Stylemix\\Base\\ServiceProvider"
+            ],
+            "aliases": {
+                "EntityForm": "Stylemix\\Base\\Facades\\EntityForm"
+            }
         }
     }
 }

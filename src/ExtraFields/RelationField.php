@@ -77,11 +77,11 @@ class RelationField extends Base
 	/**
 	 * Set eloquent query builder for options
 	 *
-	 * @param \Illuminate\Database\Eloquent\Builder $query
+	 * @param \Illuminate\Database\Eloquent\Builder|callable $query
 	 *
 	 * @return RelationField
 	 */
-	public function setQuery(\Illuminate\Database\Eloquent\Builder $query) : RelationField
+	public function setQuery($query) : RelationField
 	{
 		$this->query = $query;
 
@@ -119,7 +119,10 @@ class RelationField extends Base
 	 */
 	protected function getOptionsFromQuery($value = null)
 	{
-		$results = $this->query
+		/** @var \Illuminate\Database\Eloquent\Builder $builder */
+		$builder = $this->evaluate($this->query);
+
+		$results = $builder
 			->when($value, function ($builder, $value) {
 				$builder->where($this->otherKey, $value);
 			})
