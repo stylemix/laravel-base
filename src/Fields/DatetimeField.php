@@ -4,10 +4,10 @@ namespace Stylemix\Base\Fields;
 
 use Carbon\Carbon;
 
-class DatetimeField extends TextField
+class DatetimeField extends Base
 {
 
-	public $type = 'datetime-local';
+	public $component = 'datetime-field';
 
 	public function getRules()
 	{
