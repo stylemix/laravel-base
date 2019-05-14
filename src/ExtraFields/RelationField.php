@@ -10,8 +10,10 @@ use Stylemix\Base\Fields\Base;
  * @method $this ajax(bool $value)
  * @property array $options
  * @method $this options(array $options)
- * @property array $source
- * @method $this source(array $sourceOptions)
+ * @property string $ajaxUrl
+ * @method $this ajaxUrl(string $ajaxUrl)
+ * @property array $ajaxParams
+ * @method $this ajaxParams(array $ajaxParams)
  * @property array $queryParam
  * @method $this queryParam(string $param)
  * @property string $otherKey
@@ -45,21 +47,28 @@ class RelationField extends Base
 	{
 		$value = $this->resolve($this->resource);
 
+		if (!$this->ajaxUrl) {
+			$this->ajaxUrl = $this->guessAjaxUrl();
+		}
+
+		if (!$this->ajaxParams) {
+			$this->ajaxParams = [
+				'context' => 'options',
+				'primary_key' => $this->otherKey,
+			];
+		}
+
+		$this->source = [
+			'url' => $this->ajaxUrl,
+			'params' => $this->ajaxParams,
+		];
+
 		if ($this->ajax && $this->query && empty($this->options) && $value) {
 			$this->options = $this->getOptionsFromQuery($value);
 		}
 
 		if (!$this->ajax && $this->query && empty($this->options)) {
 			$this->options = $this->getOptionsFromQuery();
-		}
-		else {
-			$this->source = [
-				'url' => $this->guessAjaxUrl(),
-				'params' => [
-					'context' => 'options',
-					'primary_key' => $this->otherKey,
-				],
-			];
 		}
 
 		return parent::toArray();

@@ -2,6 +2,7 @@
 
 namespace Stylemix\Base\Fields;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
@@ -14,8 +15,12 @@ use Illuminate\Support\Str;
  * @method $this label($label) Set label for field
  * @property string $placeholder Placeholder for field
  * @method $this placeholder($placeholder) Set placeholder for field
- * @property boolean  $required  Field value is required
+ * @property string $helpText Help text for field
+ * @method $this helpText($help) Set help text for field
+ * @property boolean $required  Field value is required
  * @method $this required($value = true) Set as required
+ * @property boolean $nullable  Field value can be null
+ * @method $this nullable($nullable = true) Set flag that value can be nullable
  * @property boolean  $multiple  Multiple mode
  * @method $this multiple($value = true) Set as multiple
  * @property mixed $initialValue  Initial value for empty model
@@ -64,6 +69,7 @@ abstract class Base extends Fluent
 			'placeholder' => null,
 			'readonly' => null,
 			'disabled' => null,
+			'nullable' => true,
 		];
 
 		foreach ($defaults as $key => $value) {
@@ -118,7 +124,8 @@ abstract class Base extends Fluent
 		if ($this->required) {
 			array_unshift($rules, 'required');
 		}
-		else {
+
+		if ($this->nullable) {
 			array_unshift($rules, 'nullable');
 		}
 
@@ -241,11 +248,12 @@ abstract class Base extends Fluent
 	 */
 	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
 	{
-		$value = $request[$requestAttribute];
+		$value = $this->getValueFromRequest($request, $requestAttribute);
 
 		$value = $this->multiple ?
 			array_map([$this, 'sanitizeRequestInput'], Arr::wrap($value)) :
-			$this->sanitizeRequestInput($value);
+			// We shouldn't sanitize null value, since it means no value
+			(is_null($value) ? null : $this->sanitizeRequestInput($value));
 
 		// If attribute path has dots, that means filling value into a deep array
 		// For eloquent model or other objects with overloaded properties
@@ -259,7 +267,19 @@ abstract class Base extends Fluent
 		else {
 			data_set($model, $attribute, $value);
 		}
+	}
 
+	/**
+	 * Method that can be overridden by some fields for retrieving input value.
+	 *
+	 * @param \Illuminate\Http\Request $request
+	 * @param $requestAttribute
+	 *
+	 * @return mixed
+	 */
+	protected function getValueFromRequest(Request $request, $requestAttribute)
+	{
+		return $request[$requestAttribute];
 	}
 
 	/**
@@ -344,5 +364,18 @@ abstract class Base extends Fluent
 	public function getResource()
 	{
 		return $this->resource;
+	}
+
+	/**
+	 * If is value is callable, calls it with additional arguments or returns as is
+	 *
+	 * @param mixed $value
+	 * @param mixed ...$arguments
+	 *
+	 * @return mixed
+	 */
+	protected function evaluate($value, ...$arguments)
+	{
+		return $value instanceof Closure ? $value($this, ...$arguments) : $value;
 	}
 }

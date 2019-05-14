@@ -5,6 +5,8 @@ namespace Stylemix\Base\Traits;
 trait ResourceContexts
 {
 
+	protected $context = null;
+
 	/**
 	 * Get array for current contextual request
 	 *
@@ -32,7 +34,7 @@ trait ResourceContexts
 	 */
 	protected function getContext($request)
 	{
-		if (property_exists($this, 'context')) {
+		if ($this->context !== null) {
 			return $this->context;
 		}
 
@@ -50,5 +52,19 @@ trait ResourceContexts
 	protected function isContext($context, $request)
 	{
 		return $this->getContext($request) == $context;
+	}
+
+	/**
+	 * Set current context
+	 *
+	 * @param null $context
+	 *
+	 * @return $this
+	 */
+	public function setContext($context)
+	{
+		$this->context = $context;
+
+		return $this;
 	}
 }

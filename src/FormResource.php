@@ -11,13 +11,6 @@ abstract class FormResource extends JsonResource
 {
 
 	/**
-	 * The "data" wrapper that should be applied.
-	 *
-	 * @var string
-	 */
-	public static $wrap = null;
-
-	/**
 	 * @var \Stylemix\Base\Fields\Base[]|\Illuminate\Support\Collection Collected list of fields
 	 */
 	private $fields;
@@ -170,6 +163,13 @@ abstract class FormResource extends JsonResource
 		$fields->each->fill($request, $resource);
 	}
 
+	public function with($request)
+	{
+		return array_merge(parent::with($request), [
+			'fields' => $this->getFields()->toArray(),
+		]);
+	}
+
 	public function toArray($request)
 	{
 		// resource resolved to array
@@ -187,10 +187,7 @@ abstract class FormResource extends JsonResource
 			$data = new \stdClass();
 		}
 
-		return [
-			'fields' => $this->getFields()->toArray(),
-			'data' => $data,
-		];
+		return $data;
 	}
 
 	protected function isUpdate(Request $request)
