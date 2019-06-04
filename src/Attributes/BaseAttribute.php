@@ -197,38 +197,6 @@ abstract class BaseAttribute extends Fluent
 	}
 
 	/**
-	 * Get label from translations by attribute name. Defaults to studly case from name
-	 *
-	 * @return string
-	 */
-	public function getFieldLabel()
-	{
-		return Arr::get(trans('attributes'), $this->name . '.label', function () {
-			return Str::title(str_replace('_', ' ', Str::snake($this->name)));
-		});
-	}
-
-	/**
-	 * Get label from translations by attribute name. Defaults to studly case from name
-	 *
-	 * @return string
-	 */
-	public function getFieldPlaceholder()
-	{
-		return Arr::get(trans('attributes'), $this->name . '.placeholder');
-	}
-
-	/**
-	 * Get label from translations by attribute name. Defaults to studly case from name
-	 *
-	 * @return string
-	 */
-	public function getFieldHelp()
-	{
-		return Arr::get(trans('attributes'), $this->name . '.help');
-	}
-
-	/**
 	 * If is value is callable, calls it with additional arguments or returns as is
 	 *
 	 * @param mixed $value

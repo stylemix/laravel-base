@@ -121,10 +121,7 @@ class ServiceProvider extends BaseProvider
 	{
 		return $field
 			->required($attribute->required)
-			->multiple($attribute->multiple)
-			->label($attribute->getFieldLabel())
-			->placeholder($attribute->getFieldPlaceholder())
-			->helpText($attribute->getFieldHelp());
+			->multiple($attribute->multiple);
     }
 
     /**

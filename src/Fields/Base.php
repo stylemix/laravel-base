@@ -77,7 +77,9 @@ abstract class Base extends Fluent
 		}
 
 		$this->attribute = $attribute;
-		$this->label     = $this->getLabel();
+		$this->label     = Str::ucfirst(str_replace('_', ' ', Str::snake($attribute)));
+
+		$this->trans('attributes');
 	}
 
 	/**
@@ -231,9 +233,32 @@ abstract class Base extends Fluent
 		return $array;
 	}
 
-	protected function getLabel()
+	/**
+	 * Take translations from provided translation resource
+	 *
+	 * @param string $base
+	 * @param string $attribute
+	 *
+	 * @return $this
+	 */
+	public function trans($base, $attribute = null)
 	{
-		return array_get(trans('attributes'), $this->attribute, studly_case($this->attribute));
+		$attribute = $attribute ?? $this->attribute;
+		$trans = trans($base . '.' . $attribute);
+
+		if (isset($trans['label'])) {
+			$this->label = $trans['label'];
+		}
+
+		if (isset($trans['placeholder'])) {
+			$this->placeholder = $trans['placeholder'];
+		}
+
+		if (isset($trans['help_text'])) {
+			$this->helpText = $trans['help_text'];
+		}
+
+		return $this;
 	}
 
 	/**
