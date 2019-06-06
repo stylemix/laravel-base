@@ -22,6 +22,11 @@ trait CastsEnums
 			return $this->{'set' . Str::studly($key) . 'Attribute'}($value);
 		}
 
+		if (is_null($value)) {
+			$this->attributes[$key] = null;
+			return $this;
+		}
+
 		if ($value instanceof Enum) {
 			$this->attributes[$key] = $value->value();
 		}
