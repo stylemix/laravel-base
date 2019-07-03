@@ -7,12 +7,8 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordField extends TextField
 {
-	public $type = 'password';
 
-	public function getRules()
-	{
-		return array_merge(parent::getRules(), ['string']);
-	}
+	public $type = 'password';
 
 	protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
 	{

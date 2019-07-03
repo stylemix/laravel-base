@@ -4,6 +4,7 @@ namespace Stylemix\Base\Tests;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 use Stylemix\Base\Fields\NumberField;
 use Stylemix\Base\Fields\TextField;
 use Stylemix\Base\Tests\Dummy\DummyField;
@@ -12,6 +13,11 @@ use Stylemix\Base\Tests\Dummy\DummyModel;
 
 class FormResourceTest extends TestCase
 {
+
+	protected function setUp() : void
+	{
+		parent::setUp();
+	}
 
 	public function testToArray()
 	{
@@ -23,7 +29,7 @@ class FormResourceTest extends TestCase
 			'text' => null,
 			'number' => null,
 			'field1' => null,
-		], $resolved['data']);
+		], $resolved);
 
 		// resource with values
 		$resolved = $this->makeForm()
@@ -34,7 +40,7 @@ class FormResourceTest extends TestCase
 			'field1' => 'val1',
 			'text' => null,
 			'number' => null,
-		], $resolved['data']);
+		], $resolved);
 	}
 
 	public function testFill()
@@ -88,6 +94,27 @@ class FormResourceTest extends TestCase
 		$form->fill($model, $request);
 
 		$this->assertSame($data, $model->getAttributes());
+	}
+
+	public function testRules()
+	{
+		$request = Request::create('/');
+		$rules = $this->makeForm()
+			->setTestFields([
+				TextField::make('text1')
+					->required(),
+				TextField::make('text2')
+					->required()
+					->multiple()
+					->rules(Rule::unique('table')),
+			])
+			->rules($request);
+
+		$this->assertEquals([
+			'text1' => ['nullable', 'required', 'string'],
+			'text2.*' => ['nullable', 'required', 'string', Rule::unique('table')],
+			'text2' => ['array'],
+		], $rules);
 	}
 
 	/**

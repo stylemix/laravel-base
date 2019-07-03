@@ -7,9 +7,8 @@ class FileField extends Base
 
 	public $component = 'file-field';
 
-	public function getRules()
-	{
-		return array_merge(parent::getRules(), ['file']);
-	}
+	protected $typeRules = [
+		'file'
+	];
 
 }

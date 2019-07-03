@@ -33,7 +33,7 @@ class QueryBuilderTest extends TestCase
 
 		$this->assertEquals([
 			'text',
-			'enum',
+			Filter::exact('enum'),
 			'slug',
 			'long_text',
 			Filter::custom('number', NumberFilter::class),

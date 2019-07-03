@@ -56,6 +56,11 @@ class BaseTest extends TestCase
 		$validator = new DummyValidator();
 		$field     = $this->makeField()->rules($validator);
 		$this->assertEquals(['nullable', $validator], $field->getRules());
+
+		$field = $this->makeField()
+			->multiple()
+			->rules('min:3');
+		$this->assertEquals(['array', '*' => ['nullable', 'min:3']], $field->getRules());
 	}
 
 	/**

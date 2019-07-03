@@ -15,9 +15,9 @@ class NumberField extends Base
 
 	public $component = 'number-field';
 
-	public function getRules()
+	protected function getTypeRules() : array
 	{
-		return array_merge(parent::getRules(), [$this->integer ? 'integer' : 'numeric']);
+		return [$this->integer ? 'integer' : 'numeric'];
 	}
 
 	/**

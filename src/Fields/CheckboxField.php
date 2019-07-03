@@ -7,6 +7,10 @@ class CheckboxField extends Base
 
 	public $component = 'checkbox-field';
 
+	protected $typeRules = [
+		'boolean'
+	];
+
 	/**
 	 * @inheritdoc
 	 */

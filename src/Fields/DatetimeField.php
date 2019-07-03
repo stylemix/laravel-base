@@ -9,10 +9,9 @@ class DatetimeField extends Base
 
 	public $component = 'datetime-field';
 
-	public function getRules()
-	{
-		return array_merge(parent::getRules(), ['date']);
-	}
+	protected $typeRules = [
+		'date'
+	];
 
 	protected function sanitizeResolvedValue($value)
 	{

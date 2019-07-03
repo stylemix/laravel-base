@@ -2,6 +2,8 @@
 
 namespace Stylemix\Base\Fields;
 
+use Illuminate\Support\Str;
+
 /**
  * Class Text
  *
@@ -35,6 +37,10 @@ class TextField extends Base
 
 	public $type = 'text';
 
+	protected $typeRules = [
+		'string',
+	];
+
 	protected $defaults = [
 		'min' => null,
 		'max' => null,
@@ -51,7 +57,7 @@ class TextField extends Base
 
 	public function __call($method, $parameters)
 	{
-		if (starts_with($method, 'type')) {
+		if (Str::startsWith($method, 'type')) {
 			$this->fillType($method);
 			return $this;
 		}

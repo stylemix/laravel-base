@@ -54,25 +54,23 @@ abstract class FormResource extends JsonResource
 
 		$rules = collect();
 		$fields->each(function ($field) use ($request, $rules) {
-			$key = $field->attribute;
-			$fieldRules = $field->getRules($request);
+			$topRules = [];
+			$fieldRules = collect($field->getRules($request));
 
-			if ($this->isUpdate($request) && in_array('required', $fieldRules)) {
-				array_unshift($fieldRules, 'sometimes');
+			if ($this->isUpdate($request) && $fieldRules->isNotEmpty()) {
+				$fieldRules->prepend('sometimes');
 			}
 
-			if ($field->multiple) {
-				$typeRules = array_diff($fieldRules, ['required', 'sometimes']);
-
-				if (count($fieldRules = array_diff($fieldRules, $typeRules))) {
-					$rules[$key] = array_values($fieldRules);
+			foreach($fieldRules as $key => $_rule) {
+				if (is_numeric($key)) {
+					$topRules[] = $_rule;
 				}
+				else {
+					$rules[$field->attribute . '.' . $key] = $_rule;
+				}
+			}
 
-				$rules[$key . '.*'] = array_values($typeRules);
-			}
-			elseif (count($fieldRules)) {
-				$rules[$key] = $fieldRules;
-			}
+			$rules[$field->attribute] = $topRules;
 		});
 
 		return $rules->all();

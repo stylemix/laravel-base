@@ -7,6 +7,10 @@ class TextareaField extends Base
 
 	public $component = 'textarea-field';
 
+	protected $typeRules = [
+		'string'
+	];
+
 	protected $defaults = [
 		'cols' => null,
 		'rows' => null,

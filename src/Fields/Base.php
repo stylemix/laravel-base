@@ -35,6 +35,12 @@ abstract class Base extends Fluent
 	public $rules;
 
 	/**
+	 * Rules of specific field type that should be merged to final rules list
+	 * @var array
+	 */
+	protected $typeRules = [];
+
+	/**
 	 * Default values for fields properties
 	 * @var array
 	 */
@@ -117,11 +123,7 @@ abstract class Base extends Fluent
 	 */
 	public function getRules()
 	{
-		$rules = Arr::wrap($this->rules);
-
-		if (isset($rules[0]) && is_string($rules[0]) && Str::contains($rules[0], '|')) {
-			$rules = explode('|', $rules[0]);
-		}
+		$rules = $this->getNormalizedRules();
 
 		if ($this->required) {
 			array_unshift($rules, 'required');
@@ -129,6 +131,10 @@ abstract class Base extends Fluent
 
 		if ($this->nullable) {
 			array_unshift($rules, 'nullable');
+		}
+
+		if ($this->multiple) {
+			return array_filter(['array', '*' => $rules]);
 		}
 
 		return $rules;
@@ -402,5 +408,31 @@ abstract class Base extends Fluent
 	protected function evaluate($value, ...$arguments)
 	{
 		return $value instanceof Closure ? $value($this, ...$arguments) : $value;
+	}
+
+	/**
+	 * Converts client provided rules to array of rules
+	 * and merges specific type rules
+	 *
+	 * @return array
+	 */
+	protected function getNormalizedRules() : array
+	{
+		$rules = Arr::wrap($this->rules);
+
+		if (isset($rules[0]) && is_string($rules[0]) && Str::contains($rules[0], '|')) {
+			$rules = explode('|', $rules[0]);
+		}
+
+		return array_merge($this->getTypeRules(), $rules);
+	}
+
+	/**
+	 * Getter for type rules to allow implement custom behaviour
+	 * @return array
+	 */
+	protected function getTypeRules() : array
+	{
+		return $this->typeRules;
 	}
 }

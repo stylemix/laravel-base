@@ -8,7 +8,7 @@ namespace Stylemix\Base\Fields;
  * @property $modules Editor's (quill) modules
  * @method $this modules($modules) Set just editor (quill) modules
  */
-class EditorField extends Base
+class EditorField extends TextareaField
 {
 
 	public $component = 'editor-field';

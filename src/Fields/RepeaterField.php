@@ -6,11 +6,17 @@ use Illuminate\Support\Arr;
 
 /**
  * @method static \Stylemix\Base\Fields\RepeaterField make(string $attribute, array|string $subFields)
+ * @property \Stylemix\Base\Fields\Base[] $fields
+ * @property \Stylemix\Base\Fields\Base $field
  */
 class RepeaterField extends Base
 {
 
 	public $component = 'repeater-field';
+
+	protected $typeRules = [
+		'array',
+	];
 
 	public function __construct($attribute, $subFields)
 	{
@@ -38,7 +44,26 @@ class RepeaterField extends Base
 
 	public function getRules()
 	{
-		return array_merge(parent::getRules(), ['array']);
+		$rules = $this->getNormalizedRules();
+
+		if ($this->required) {
+			array_unshift($rules, 'min:1');
+			array_unshift($rules, 'required');
+		}
+		elseif ($this->nullable) {
+			array_unshift($rules, 'nullable');
+		}
+
+		if ($this->fields) {
+			foreach ($this->fields as $field) {
+				$rules['*.' . $field->attribute] = $field->getRules();
+			}
+		}
+		elseif ($this->field) {
+			$rules['*'] = $this->field->getRules();
+		}
+
+		return $rules;
 	}
 
 }
