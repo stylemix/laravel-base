@@ -23,8 +23,6 @@ abstract class Entity extends Model
 
 	protected static $resolvedCasts;
 
-	protected $dateFormat = 'Y-m-d\TH:i:s';
-
 	/**
 	 * @var bool Force reloading attachments after changes
 	 */

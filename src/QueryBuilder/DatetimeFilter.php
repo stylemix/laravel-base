@@ -9,7 +9,9 @@ class DatetimeFilter extends NumberFilter
 
 	protected function parseValue($value)
 	{
-		return Carbon::parse($value)->toDateTimeString();
+		return Carbon::parse($value)
+			->setTimezone(config('app.timezone'))
+			->toDateTimeString();
 	}
 
 }

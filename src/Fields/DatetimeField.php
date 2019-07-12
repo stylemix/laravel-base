@@ -3,6 +3,7 @@
 namespace Stylemix\Base\Fields;
 
 use Carbon\Carbon;
+use DateTime;
 
 class DatetimeField extends Base
 {
@@ -16,7 +17,7 @@ class DatetimeField extends Base
 	protected function sanitizeResolvedValue($value)
 	{
 		if ($value instanceof Carbon) {
-			$value = $value->format('Y-m-d\TH:i:s');
+			$value = $value->format(DateTime::ISO8601);
 		}
 
 		return $value;
