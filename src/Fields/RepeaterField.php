@@ -18,6 +18,8 @@ class RepeaterField extends Base
 		'array',
 	];
 
+	protected $multiField = false;
+
 	public function __construct($attribute, $subFields)
 	{
 		parent::__construct($attribute);
@@ -26,6 +28,7 @@ class RepeaterField extends Base
 
 		if (is_array($subFields)) {
 			$this->fields = $subFields;
+			$this->multiField = true;
 		}
 		else {
 			$this->field = $subFields;
@@ -34,12 +37,12 @@ class RepeaterField extends Base
 
 	protected function sanitizeRequestInput($value)
 	{
-		return Arr::wrap($value);
+		return $this->multiField ? Arr::wrap($value) : $value;
 	}
 
 	protected function sanitizeResolvedValue($value)
 	{
-		return Arr::wrap($value);
+		return $this->multiField ? Arr::wrap($value) : $value;
 	}
 
 	public function getRules()
@@ -64,6 +67,20 @@ class RepeaterField extends Base
 		}
 
 		return $rules;
+	}
+
+	public function resolve($data, $attribute = null)
+	{
+		$resolved = parent::resolve($data, $attribute);
+
+		return !$resolved ? [] : $resolved;
+	}
+
+	public function multiple($multiple)
+	{
+		if (!$multiple) {
+			throw new \BadMethodCallException('Turning off multiple flag for RepeaterField is denied.');
+		}
 	}
 
 }

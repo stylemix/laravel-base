@@ -10,6 +10,39 @@ use Stylemix\Base\Tests\TestCase;
 class RepeaterFieldTest extends TestCase
 {
 
+	public function testMultipleFalse()
+	{
+		$this->expectException(\BadMethodCallException::class);
+		$this->makeField(TextField::make('text'))->multiple(false);
+	}
+
+	public function testResolvingSingleMode()
+	{
+		$field = $this->makeField(TextField::make('text'));
+
+		$this->assertEquals([], $field->resolve([]));
+		$this->assertEquals([], $field->resolve(['dummy' => null]));
+		$this->assertEquals([], $field->resolve(['dummy' => []]));
+		$this->assertEquals(['lorem', 'ipsum'], $field->resolve(['dummy' => ['lorem', 'ipsum']]));
+	}
+
+	public function testResolvingMultiMode()
+	{
+		$field = $this->makeField([
+			TextField::make('text'),
+			NumberField::make('number'),
+		]);
+
+		$this->assertEquals([], $field->resolve([]));
+		$this->assertEquals([], $field->resolve(['dummy' => null]));
+		$this->assertEquals([], $field->resolve(['dummy' => []]));
+
+		$this->assertEquals(
+			[['text' => 'lorem'], ['number' => 1], ['ipsum']],
+			$field->resolve(['dummy' => [['text' => 'lorem'], ['number' => 1], 'ipsum']])
+		);
+	}
+
 	public function testRules()
 	{
 		$rules = $this->makeField([

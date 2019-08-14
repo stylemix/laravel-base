@@ -125,16 +125,21 @@ abstract class Base extends Fluent
 	{
 		$rules = $this->getNormalizedRules();
 
+		if ($this->multiple) {
+			// Allow each multiple item to be nullable in case of any type validations
+			// in order to filter out deleted items on updating
+			if (count($rules)) {
+				array_unshift($rules, 'nullable');
+			}
+
+			$rules = array_filter(['array', '*' => $rules]);
+		}
+
 		if ($this->required) {
 			array_unshift($rules, 'required');
 		}
-
-		if ($this->nullable) {
+		elseif ($this->nullable) {
 			array_unshift($rules, 'nullable');
-		}
-
-		if ($this->multiple) {
-			return array_filter(['array', '*' => $rules]);
 		}
 
 		return $rules;

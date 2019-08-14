@@ -13,7 +13,7 @@ class DatetimeFieldTest extends TestCase
 	{
 		$field = $this->makeField();
 		$value = Carbon::create(2019, 1, 1, 18, 0, 0);
-		$this->assertEquals('2019-01-01T18:00:00', $field->resolve(['dummy' => $value]));
+		$this->assertEquals('2019-01-01T18:00:00+0000', $field->resolve(['dummy' => $value]));
 	}
 
 	/**

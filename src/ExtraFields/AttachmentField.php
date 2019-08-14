@@ -25,7 +25,9 @@ class AttachmentField extends Base
 		if ($this->multiple) {
 			$files = Arr::wrap($request->request->get($requestAttribute, []));
 			$files += Arr::wrap($request->files->get($requestAttribute, []));
-			return ksort($files);
+			ksort($files);
+
+			return $files;
 		}
 
 		return $request[$requestAttribute];
