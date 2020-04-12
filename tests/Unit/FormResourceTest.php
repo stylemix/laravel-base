@@ -101,6 +101,7 @@ class FormResourceTest extends TestCase
 		$request = Request::create('/');
 		$rules = $this->makeForm()
 			->setTestFields([
+				TextField::make('text'),
 				TextField::make('text1')
 					->required(),
 				TextField::make('text2')
@@ -111,9 +112,10 @@ class FormResourceTest extends TestCase
 			->rules($request);
 
 		$this->assertEquals([
-			'text1' => ['nullable', 'required', 'string'],
-			'text2.*' => ['nullable', 'required', 'string', Rule::unique('table')],
-			'text2' => ['array'],
+			'text' => ['nullable', 'string'],
+			'text1' => ['required', 'string'],
+			'text2.*' => ['nullable', 'string', Rule::unique('table')],
+			'text2' => ['required', 'array'],
 		], $rules);
 	}
 
