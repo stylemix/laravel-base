@@ -37,6 +37,8 @@ class DummyEntity extends Entity
 			Datetime::make('datetime'),
 			Attachment::make('attachment'),
 			AttachmentImage::make('attachment_image'),
+			Attachment::make('attachments')
+				->multiple(),
 			Relation::make('relation'),
 			Relation::make('relation_e')
 				->excludeSort()

@@ -128,6 +128,11 @@ class Attachment extends BaseAttribute implements Mutatable
 		return $this->multiple ? $items->all() : $items->first();
 	}
 
+	/**
+	 * @param \Plank\Mediable\Media $media
+	 *
+	 * @return \Illuminate\Support\Fluent
+	 */
 	protected function getMediaJson($media)
 	{
 		return new Fluent([

@@ -9,11 +9,11 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "spatie/laravel-query-builder": "^1.17",
-        "plank/laravel-mediable": "^2.8"
+        "spatie/laravel-query-builder": "^2.1",
+        "plank/laravel-mediable": "^2.8|^3.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^3.6"
+        "orchestra/testbench": "^4.7"
     },
     "autoload": {
         "psr-4": {
