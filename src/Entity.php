@@ -8,10 +8,12 @@ use Plank\Mediable\Mediable;
 use Stylemix\Base\Eloquent\CastsEnums;
 use Stylemix\Base\Eloquent\DateFixes;
 use Stylemix\Base\Contracts\Mutatable;
+use Stylemix\Base\Entity\DefaultValues;
 
 abstract class Entity extends Model
 {
 
+	use DefaultValues;
 	use DateFixes, CastsEnums, Mediable;
 
 	/**
@@ -77,7 +79,7 @@ abstract class Entity extends Model
 			return;
 		}
 
-		/** @var \Stylemix\Base\Attribute\Base $attribute */
+		/** @var \Stylemix\Base\Attributes\BaseAttribute $attribute */
 		$attribute = $this->getAttributeDefinitions()->keyByFills()->get($key);
 
 		if (!$attribute) {

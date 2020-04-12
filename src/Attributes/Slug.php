@@ -20,13 +20,13 @@ class Slug extends Text
 		parent::__construct($name);
 	}
 
-	public function applyDefaultValue($attributes)
+	public function saving($data, $model)
 	{
 		if ($this->generateFrom instanceof Closure) {
-			return call_user_func($this->generateFrom, $attributes);
+			$model[$this->fillableName] = call_user_func($this->generateFrom, $data, $model);
 		}
 		else {
-			return Str::slug($attributes->get($this->generateFrom) ?? Str::random(8));
+			$model[$this->fillableName] = Str::slug($data->get($this->generateFrom) ?? Str::random(8));
 		}
 	}
 
