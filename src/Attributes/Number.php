@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Attributes;
 
-use Spatie\QueryBuilder\Filter;
+use Spatie\QueryBuilder\AllowedFilter;
 use Stylemix\Base\Contracts\Filterable;
 use Stylemix\Base\Contracts\Sortable;
 use Stylemix\Base\QueryBuilder\NumberFilter;
@@ -34,6 +34,6 @@ class Number extends BaseAttribute implements Filterable, Sortable
 	 */
 	public function applyFilter($filters)
 	{
-		$filters->push(Filter::custom($this->name, NumberFilter::class));
+		$filters->push(AllowedFilter::custom($this->name, new NumberFilter()));
 	}
 }

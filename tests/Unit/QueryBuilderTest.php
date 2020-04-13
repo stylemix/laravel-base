@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Tests;
 
-use Spatie\QueryBuilder\Filter;
+use Spatie\QueryBuilder\AllowedFilter;
 use Stylemix\Base\AttributeCollection;
 use Stylemix\Base\QueryBuilder;
 use Stylemix\Base\QueryBuilder\DatetimeFilter;
@@ -33,14 +33,14 @@ class QueryBuilderTest extends TestCase
 
 		$this->assertEquals([
 			'text',
-			Filter::exact('enum'),
+			AllowedFilter::exact('enum'),
 			'slug',
 			'long_text',
-			Filter::custom('number', NumberFilter::class),
-			Filter::custom('id', NumberFilter::class),
-			Filter::exact('boolean'),
-			Filter::custom('datetime', DatetimeFilter::class),
-			Filter::custom('relation_id', NumberFilter::class),
+			AllowedFilter::custom('number', new NumberFilter),
+			AllowedFilter::custom('id', new NumberFilter),
+			AllowedFilter::exact('boolean'),
+			AllowedFilter::custom('datetime', new DatetimeFilter),
+			AllowedFilter::custom('relation_id', new NumberFilter),
 		], $builder->getAllowedFilters());
 	}
 

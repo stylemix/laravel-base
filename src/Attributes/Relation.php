@@ -3,7 +3,7 @@
 namespace Stylemix\Base\Attributes;
 
 use Exception;
-use Spatie\QueryBuilder\Filter;
+use Spatie\QueryBuilder\AllowedFilter;
 use Stylemix\Base\Contracts\Filterable;
 use Stylemix\Base\Entity;
 use Stylemix\Base\QueryBuilder\NumberFilter;
@@ -58,7 +58,7 @@ class Relation extends BaseAttribute implements Filterable
 	 */
 	public function applyFilter($filters)
 	{
-		$filters->push(Filter::custom($this->fillableName, NumberFilter::class));
+		$filters->push(AllowedFilter::custom($this->fillableName, new NumberFilter()));
 	}
 
 	public function getQueryBuilder(Entity $entity)

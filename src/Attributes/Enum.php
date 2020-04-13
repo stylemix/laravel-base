@@ -2,7 +2,7 @@
 
 namespace Stylemix\Base\Attributes;
 
-use Spatie\QueryBuilder\Filter;
+use Spatie\QueryBuilder\AllowedFilter;
 
 /**
  * @property mixed $source Enum options source
@@ -15,7 +15,7 @@ class Enum extends Text
 	 */
 	public function applyFilter($filters)
 	{
-		$filters->push(Filter::exact($this->name));
+		$filters->push(AllowedFilter::exact($this->name));
 	}
 
 	/**
