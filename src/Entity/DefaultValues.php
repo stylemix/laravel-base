@@ -10,6 +10,13 @@ trait DefaultValues
 	 */
 	protected static $defaultValues = [];
 
+	protected static function bootDefaultValues()
+	{
+		// When testing application, resolved default values
+		// should be reset for each test.
+		static::$defaultValues = [];
+	}
+
 	protected function initializeDefaultValues()
 	{
 		$class = static::class;

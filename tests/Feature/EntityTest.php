@@ -8,6 +8,12 @@ use Stylemix\Base\Tests\TestCase;
 class EntityTest extends TestCase
 {
 
+	public function testNoDefaultValues()
+	{
+		$dummy = new DummyEntity();
+		$this->assertEquals([], $dummy->getAttributes());
+	}
+
 	public function testDefaultValues()
 	{
 		$attributes = DummyEntity::getAttributeDefinitions();
